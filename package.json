@@ -1,0 +1,32 @@
+{
+    "name": "qrcode-system-backend",
+    "version": "1.0.0",
+    "description": "QR Code System for Affiliates and Discounts",
+    "main": "app.js",
+    "scripts": {
+        "start": "node app.js",
+        "dev": "nodemon app.js",
+        "test": "jest api.test.js"
+    },
+    "dependencies": {
+        "bcryptjs": "^2.4.3",
+        "body-parser": "^1.20.3",
+        "cors": "^2.8.5",
+        "dotenv": "^10.0.0",
+        "express": "^4.21.2",
+        "express-rate-limit": "^7.5.0",
+        "express-validator": "^6.15.0",
+        "helmet": "^5.1.1",
+        "jsonwebtoken": "^8.5.1",
+        "mongoose": "^6.13.8",
+        "multer": "^1.4.5-lts.2",
+        "qrcode": "^1.5.4",
+        "twilio": "^4.14.0",
+        "uuid": "^8.3.2"
+    },
+    "devDependencies": {
+        "jest": "^27.4.7",
+        "nodemon": "^2.0.15",
+        "supertest": "^6.2.2"
+    }
+}

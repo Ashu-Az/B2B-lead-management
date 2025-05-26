@@ -1,0 +1,63 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          
+      - name: Install dependencies
+        run: |
+          cd qrcode-system-backend
+          npm install
+          
+      - name: Run tests
+        run: |
+          cd qrcode-system-backend
+          npm test || true
+          
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd /var/www/Affiliate_Management_System
+            
+            # Force reset any local changes (be careful with this!)
+            git fetch --all
+            git reset --hard origin/main
+            
+            cd qrcode-system-backend
+            npm install --production
+            
+            # Restart the application (stop and start to ensure clean reload)
+            if npx pm2 list | grep -q app; then
+              echo "Stopping and restarting PM2 process"
+              npx pm2 stop app
+              npx pm2 start app.js
+            else
+              echo "Starting new PM2 process"
+              npx pm2 start app.js
+            fi
+            
+            # Clear Node.js cache
+            npx pm2 flush
+            
+            # Display PM2 status
+            npx pm2 list
+            
+            # Show deployment timestamp in logs
+            echo "Deployment completed at $(date)" >> deployment.log
+            cat deployment.log | tail -5
